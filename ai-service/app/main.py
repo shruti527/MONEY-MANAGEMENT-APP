@@ -41,41 +41,72 @@ def api_budget_insights(request: BudgetInsightRequest):
     if income <= 0:
         return BudgetInsightResponse(
             needs_percent=0, wants_percent=0, savings_percent=0,
-            is_balanced=False, message="Monthly income must be greater than 0."
+            is_balanced=False, message="Monthly income must be greater than 0.",
+            recommendation="Please enter a valid monthly income."
         )
 
-    # Simplified categorization logic for demonstration
-    # In reality, you'd map specific user categories to Needs/Wants
     needs_categories = ['Housing', 'Groceries', 'Utilities', 'Transportation', 'Healthcare']
     wants_categories = ['Dining', 'Entertainment', 'Shopping', 'Travel']
-    
+
     total_needs = sum(t.amount for t in transactions if t.category in needs_categories)
     total_wants = sum(t.amount for t in transactions if t.category in wants_categories)
-    
-    # Savings can be inferred by what's left, or specific categories
     total_spent = sum(t.amount for t in transactions)
     total_savings = income - total_spent
-    
-    needs_pct = (total_needs / income) * 100
-    wants_pct = (total_wants / income) * 100
-    savings_pct = (total_savings / income) * 100
-    
-    # 50/30/20 Rule: 50% Needs, 30% Wants, 20% Savings
-    is_balanced = needs_pct <= 55 and wants_pct <= 35 and savings_pct >= 15
-    
-    if is_balanced:
-        msg = "Great job! Your spending aligns well with the 50/30/20 budget rule."
-    elif needs_pct > 50:
-        msg = f"Your needs are taking up {needs_pct:.1f}% of your income. Consider finding ways to lower fixed costs."
-    elif wants_pct > 30:
-        msg = f"You are spending {wants_pct:.1f}% on wants. Try cutting back on discretionary spending."
+
+    needs_pct = (total_needs / income) * 100 if income > 0 else 0
+    wants_pct = (total_wants / income) * 100 if income > 0 else 0
+    savings_pct = (total_savings / income) * 100 if income > 0 else 0
+
+    category_totals = {}
+    for t in transactions:
+        category_totals[t.category] = category_totals.get(t.category, 0) + t.amount
+
+    top_category = None
+    if category_totals:
+        top_category = max(category_totals, key=category_totals.get)
+        top_amount = category_totals[top_category]
     else:
-        msg = f"Your savings rate is {savings_pct:.1f}%. Try to aim for 20% by reducing expenses."
+        top_amount = 0
+
+    is_balanced = needs_pct <= 55 and wants_pct <= 35 and savings_pct >= 15
+
+    if not transactions:
+        msg = "Add transactions to see clear budget insights."
+        recommendation = "Start by logging your recent expenses and income."
+    elif is_balanced:
+        msg = (
+            f"Strong work! Your budget is balanced: {needs_pct:.0f}% needs, "
+            f"{wants_pct:.0f}% wants, and {savings_pct:.0f}% savings."
+        )
+        recommendation = "Keep tracking your spending and maintain this healthy mix."
+    elif needs_pct > 50:
+        msg = (
+            f"Your fixed needs are using {needs_pct:.0f}% of your income. "
+            "This can make it harder to save."
+        )
+        recommendation = "Review bills, subscriptions, and utility costs to reduce essential spending."
+    elif wants_pct > 30:
+        msg = (
+            f"Discretionary spending is at {wants_pct:.0f}% of income. "
+            "That leaves less for savings."
+        )
+        recommendation = "Cut back on non-essentials like dining out or entertainment."
+    else:
+        msg = (
+            f"Your savings rate is {savings_pct:.0f}%. "
+            "Try increasing it toward 20% for a stronger budget."
+        )
+        recommendation = "Set a small monthly savings target and keep your spending steady."
+
+    if top_category and top_amount > 0:
+        msg += f" Your largest spending category is {top_category} (₹{top_amount:.0f})."
 
     return BudgetInsightResponse(
         needs_percent=round(needs_pct, 2),
         wants_percent=round(wants_pct, 2),
         savings_percent=round(savings_pct, 2),
         is_balanced=is_balanced,
-        message=msg
+        message=msg,
+        top_category=top_category,
+        recommendation=recommendation
     )

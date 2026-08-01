@@ -9,48 +9,61 @@ def predict_spending(transactions: List[Transaction]) -> List[CategoryPrediction
     if not transactions:
         return []
 
-    # Convert to DataFrame
     df = pd.DataFrame([t.model_dump() for t in transactions])
-    
-    # Extract year and month for aggregation
     df['date'] = pd.to_datetime(df['date'])
     df['year_month'] = df['date'].dt.to_period('M')
-    
-    # Aggregate by month and category
+
     monthly_cat = df.groupby(['year_month', 'category'])['amount'].sum().reset_index()
-    
     predictions = []
     categories = df['category'].unique()
-    
+
     for cat in categories:
         cat_data = monthly_cat[monthly_cat['category'] == cat].copy()
-        
-        # Sort chronologically
         cat_data = cat_data.sort_values('year_month')
-        
-        if len(cat_data) < 1:
+
+        if len(cat_data) == 0:
             continue
-        elif len(cat_data) < 3:
-            # Fallback: Moving Average (or just average if very few points)
+
+        if len(cat_data) < 2:
             projected = cat_data['amount'].mean()
+            trend = 'Needs more data'
+        elif len(cat_data) == 2:
+            projected = cat_data['amount'].mean()
+            last_change = cat_data['amount'].iloc[-1] - cat_data['amount'].iloc[-2]
+            if abs(last_change) < cat_data['amount'].mean() * 0.1:
+                trend = 'Stable'
+            elif last_change > 0:
+                trend = 'Increasing'
+            else:
+                trend = 'Decreasing'
         else:
-            # Linear Regression
-            # Create a simple time index
             cat_data['time_index'] = np.arange(len(cat_data))
-            
             X = cat_data[['time_index']]
             y = cat_data['amount']
-            
+
             model = LinearRegression()
             model.fit(X, y)
-            
-            # Predict next month (time_index = len(cat_data))
+
             next_index = np.array([[len(cat_data)]])
             projected = model.predict(next_index)[0]
-            
-            # Ensure we don't predict negative spending
             projected = max(0, projected)
-            
-        predictions.append(CategoryPrediction(category=cat, projected_amount=round(projected, 2)))
-        
+
+            slope = float(model.coef_[0])
+            avg_amount = cat_data['amount'].mean() if cat_data['amount'].mean() != 0 else 1
+            if slope > avg_amount * 0.05:
+                trend = 'Increasing'
+            elif slope < -avg_amount * 0.05:
+                trend = 'Decreasing'
+            else:
+                trend = 'Stable'
+
+        predictions.append(
+            CategoryPrediction(
+                category=cat,
+                projected_amount=round(projected, 2),
+                trend=trend,
+            )
+        )
+
+    predictions = sorted(predictions, key=lambda p: p.projected_amount, reverse=True)
     return predictions

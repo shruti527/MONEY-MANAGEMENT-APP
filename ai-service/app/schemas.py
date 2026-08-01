@@ -14,6 +14,7 @@ class PredictionRequest(BaseModel):
 class CategoryPrediction(BaseModel):
     category: str
     projected_amount: float
+    trend: Optional[str] = None
 
 class PredictionResponse(BaseModel):
     predictions: List[CategoryPrediction]
@@ -39,3 +40,5 @@ class BudgetInsightResponse(BaseModel):
     savings_percent: float
     is_balanced: bool
     message: str
+    top_category: Optional[str] = None
+    recommendation: Optional[str] = None

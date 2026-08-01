@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,13 +7,29 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { TransactionsChart } from "@/components/TransactionsChart";
 import styles from "./page.module.css";
 
-export default async function TransactionsPage() {
+export default async function TransactionsPage({ searchParams }: { searchParams?: { page?: string } }) {
   const session = await getServerSession(authOptions);
-  
+  const pageSize = 10;
+  const requestedPage = parseInt(searchParams?.page ?? "1", 10);
+  const currentPage = Number.isNaN(requestedPage) || requestedPage < 1 ? 1 : requestedPage;
+
+  const totalCount = await prisma.transaction.count({
+    where: { userId: session?.user?.id },
+  });
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  const page = Math.min(currentPage, totalPages);
+  const offset = (page - 1) * pageSize;
+
   const transactions = await prisma.transaction.findMany({
     where: { userId: session?.user?.id },
     orderBy: { date: "desc" },
+    skip: offset,
+    take: pageSize,
   });
+
+  const startItem = totalCount === 0 ? 0 : offset + 1;
+  const endItem = offset + transactions.length;
 
   return (
     <div className={styles.container}>
@@ -72,6 +89,26 @@ export default async function TransactionsPage() {
           </div>
         )}
       </Card>
+
+      <div className={styles.pagination}>
+        <span className={styles.pageInfo}>
+          Showing {startItem}–{endItem} of {totalCount} transactions
+        </span>
+        <div className={styles.paginationButtons}>
+          <Link
+            href={`/transactions?page=${page - 1}`}
+            className={`${styles.pageButton} ${page <= 1 ? styles.pageButtonDisabled : ''}`}
+          >
+            Previous
+          </Link>
+          <Link
+            href={`/transactions?page=${page + 1}`}
+            className={`${styles.pageButton} ${page >= totalPages ? styles.pageButtonDisabled : ''}`}
+          >
+            Next
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

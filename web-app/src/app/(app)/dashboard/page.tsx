@@ -102,6 +102,25 @@ export default async function DashboardPage() {
             <p className={styles.aiDesc}>
               {aiInsights?.message || "Not enough data for budget insights yet. Add more transactions."}
             </p>
+            {aiInsights ? (
+              <div className={styles.aiList}>
+                <div className={styles.aiListItem}>
+                  <span>Needs</span>
+                  <span>{aiInsights.needs_percent?.toFixed(0)}%</span>
+                </div>
+                <div className={styles.aiListItem}>
+                  <span>Wants</span>
+                  <span>{aiInsights.wants_percent?.toFixed(0)}%</span>
+                </div>
+                <div className={styles.aiListItem}>
+                  <span>Savings</span>
+                  <span>{aiInsights.savings_percent?.toFixed(0)}%</span>
+                </div>
+              </div>
+            ) : null}
+            {aiInsights?.recommendation ? (
+              <p className={styles.recommendation}>{aiInsights.recommendation}</p>
+            ) : null}
           </div>
 
           <div className={styles.aiCard}>
@@ -113,7 +132,7 @@ export default async function DashboardPage() {
             </div>
             <p className={styles.aiDesc}>
               {anomalies && anomalies.length > 0 
-                ? `Detected ${anomalies.length} unusual transactions recently.` 
+                ? `Detected ${anomalies.length} unusual transaction(s) recently.` 
                 : "No unusual spending patterns detected. Keep it up!"}
             </p>
           </div>
@@ -125,11 +144,24 @@ export default async function DashboardPage() {
               </div>
               <h3 className={styles.aiTitle}>Predicted Spending</h3>
             </div>
-            <p className={styles.aiDesc}>
-              {predictions && predictions.length > 0 
-                ? `Highest expected spend: ${predictions[0].category} (₹${predictions[0].projected_amount.toFixed(0)})`
-                : "Need more data to predict your future spending."}
-            </p>
+            {predictions && predictions.length > 0 ? (
+              <>
+                <div className={styles.predictionList}>
+                  {predictions.slice(0, 3).map((pred: any, idx: number) => (
+                    <div key={pred.category} className={styles.predictionItem}>
+                      <span>{idx + 1}. {pred.category}</span>
+                      <span>₹{pred.projected_amount.toLocaleString()}</span>
+                      <span className={styles.predictionTrend}>{pred.trend || 'Trend unavailable'}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className={styles.recommendation}>
+                  The AI expects your top spending categories to continue similar patterns next month.
+                </p>
+              </>
+            ) : (
+              <p className={styles.aiDesc}>Need more data to predict your future spending.</p>
+            )}
           </div>
 
         </div>

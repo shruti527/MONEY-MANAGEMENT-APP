@@ -3,12 +3,16 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+const url = process.env.TURSO_DATABASE_URL;
+const token = process.env.TURSO_AUTH_TOKEN;
+const fullUrl = url && token ? `${url}?authToken=${token}` : url;
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: fullUrl,
   },
 });
