@@ -1,0 +1,68 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+}
+
+.primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(138, 43, 226, 0.6);
+  transform: translateY(-2px);
+}
+
+.secondary {
+  background: rgba(0, 245, 212, 0.1);
+  color: var(--secondary);
+  border: 1px solid rgba(0, 245, 212, 0.3);
+}
+
+.secondary:hover:not(:disabled) {
+  background: rgba(0, 245, 212, 0.2);
+  transform: translateY(-2px);
+}
+
+.danger {
+  background: rgba(255, 0, 84, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(255, 0, 84, 0.3);
+}
+
+.danger:hover:not(:disabled) {
+  background: rgba(255, 0, 84, 0.2);
+  transform: translateY(-2px);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.fullWidth {
+  width: 100%;
+}

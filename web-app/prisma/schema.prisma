@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("TURSO_DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String
+  firstName    String?
+  lastName     String?
+  occupation   String?
+  mobileNumber String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  amount      Float
+  date        DateTime
+  type        String   // "CREDIT" or "DEBIT"
+  mode        String   // e.g., Cash, Card, UPI
+  category    String?  // Money Spent on (for debit)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

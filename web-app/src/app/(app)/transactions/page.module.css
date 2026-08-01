@@ -1,0 +1,101 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.header {
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+}
+
+.topSection {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.chartCard {
+  min-height: 380px;
+}
+
+.tableCard {
+  padding: 0;
+  overflow: hidden;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 16px 24px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: var(--transition);
+}
+
+.table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.catWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.tIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tCredit {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.tDebit {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.emptyState {
+  padding: 48px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}

@@ -1,0 +1,183 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.statCard {
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.statIconWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 4px;
+}
+
+.statValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.recentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tableCard {
+  padding: 0;
+}
+
+.transactionList {
+  display: flex;
+  flex-direction: column;
+}
+
+.transactionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: var(--transition);
+}
+
+.transactionItem:last-child {
+  border-bottom: none;
+}
+
+.transactionItem:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tTitle {
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+
+.tDate {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+.tRight {
+  text-align: right;
+}
+
+.tCredit {
+  color: var(--success);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.tDebit {
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.tMode {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.emptyState {
+  padding: 48px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.aiSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.aiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.aiCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: var(--transition);
+}
+
+.aiCard:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+.aiCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.aiTitle {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.aiDesc {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
