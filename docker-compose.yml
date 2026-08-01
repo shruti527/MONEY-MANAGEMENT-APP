@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  web:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./web-app:/app
+      - /app/node_modules # Prevent host node_modules from overwriting container node_modules if needed, but since we use npm run dev, we might want to just map everything. Actually, better to just mount the whole dir and run npm install on startup or assume it's installed.
+    # Since it's dev, we assume npm install was run locally, or we run it before dev
+    command: sh -c "apk add --no-cache python3 make g++ && npm install && npx prisma generate && npm run dev"
+    ports:
+      - "3000:3000"
+    environment:
+      - AI_SERVICE_URL=http://ai-service:8000
+    depends_on:
+      - ai-service
+
+  ai-service:
+    build:
+      context: ./ai-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai-service/app:/app/app
